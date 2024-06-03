@@ -1,8 +1,30 @@
 let saldo= 1000
+const historialTrans = [];
 
 function consultarSaldo() {
     alert("Su saldo actual es : $ " + saldo)
     console.log("Saldo consultado: $" + saldo)
+}
+
+function agregarHistorial(tipo, monto){
+    const transaccion = {
+        tipo: tipo,
+        monto: monto,
+    };
+    historialTrans.push(transaccion)
+}
+
+function mostrarHistorial(){
+    if(historialTrans === 0){
+        alert("No existen transacciones pervias")
+        console.log("No hay historial")
+    }else{
+        let mensajeHistoria = "Historial de transacciones: \n"
+        for(let i = 0 ; i <historialTrans.length; i++){
+            mensajeHistoria += i+1 + "- " + historialTrans[i].tipo + " de $" +  historialTrans[i].monto + "\n"
+        }
+        alert(mensajeHistoria)
+    }
 }
 
 function depositarDinero() {
@@ -13,7 +35,8 @@ function depositarDinero() {
             saldo = saldo + monto 
             alert("Deposito exitoso, su saldo acutal es de : $ " + saldo)
             console.log("Deposito de : $" + monto )
-            console.log("Saldo final : $" + saldo)    
+            console.log("Saldo final : $" + saldo)  
+            agregarHistorial("Deposito", monto)  
         }else{
             alert("Deposito cancelador")
             console.log("Se cancelo el deposito")
@@ -33,6 +56,7 @@ function retirarDinero(){
             alert("Se genero el retiro con exito")
             alert("Su saldo disponible es de : $ " + saldo)
             console.log("Retiro: $" + retiro + " Saldo actual : $" + saldo)
+            agregarHistorial("Retiro", saldo)
         }else{
             alert("Retiro cancelado")
             console.log("Se cancelo el retiro")
@@ -47,7 +71,7 @@ function retirarDinero(){
 function menuCajero(){
     let opcion;
     do {
-        opcion = prompt("Seleccione una opcion: \n1. Consultar saldo \n2. Depositar Dinero \n3. Retirar dinero \n4. Salir")
+        opcion = prompt("Seleccione una opcion: \n1. Consultar saldo \n2. Depositar Dinero \n3. Retirar dinero \n4. Mostrar historial de transacciones. \n5. Salir")
         switch (opcion) {
             case "1" :
                 consultarSaldo();
@@ -59,12 +83,14 @@ function menuCajero(){
                 retirarDinero();
                 break;
             case "4" :
-                alert("Gracias, vuelva pronto.");
+                mostrarHistorial();
                 break;
+            case "5":
+                alert("Gracias por usar la app.");
             default :
             alert("Opcion invalida. Vuelva a intentarlo.");
         }
-    } while (opcion !== "4")
+    } while (opcion !== "5")
 }
 
 menuCajero()
