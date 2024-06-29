@@ -5,12 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Juan Pardel / Cajero automatico simulardor</title>
     <script defer src="./js/main.js"></script>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Cajero automatico</h1>
-    <p>En el siguiente simulador creare una cuenta ficticia en donde el usuario va a poder ver el saldo de su cuenta, retirarlo, depositar y hacer otras 
-        actividades.
-    </p>
-    
+    <h1>Simulador de cajero</h1>
+    <div id="saldo"></div> <!-- menu de opciones -->
+    <div id="menu">
+        <button id="consultarSaldo">Consultar Saldo</button>
+        <button id="depositar">Realizar un deposito</button>
+        <button id="retirar">Realizar una extraccion</button>
+        <button id="verHistorial">Ver historial de transacciones</button>
+    </div>
+    <!-- formulario de acciones -->
+    <div id="formulario" style="display: none;">$
+        <input type="number" id="monto" placeholder="Ingrese el monto">
+        <button id="confirmarTransaccion">Confirmar</button>
+        <button id="cancelarTransaccion">Cancelar</button>
+    </div>
+    <div id="historial"></div>
+    <div id="mensaje"></div>
 </body>
 </html>

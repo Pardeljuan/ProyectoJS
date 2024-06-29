@@ -1,97 +1,102 @@
-let saldo= 1000
-const historialTrans = [];
+// Inicializar variables y cargar datos del localStorage
+let saldo = parseFloat(localStorage.getItem('saldo')) || 1000;
+const historialTransacciones = JSON.parse(localStorage.getItem('historialTransacciones')) || [];
 
-function consultarSaldo() {
-    alert("Su saldo actual es : $ " + saldo)
-    console.log("Saldo consultado: $" + saldo)
+
+// Actualizar el saldo en la interfaz
+document.getElementById("saldo").innerText = `Saldo actual: $${saldo.toFixed(2)}`;
+
+// Funciones de orden superior
+const filtarTransacciones = (tipo) => historialTransacciones.filter(transaccion => transaccion.tipo === tipo);
+const mapearTransacciones = () => historialTransacciones.map(transaccion => `${transaccion.tipo} de $${transaccion.monto} el ${transaccion.fecha}`).join('\n');
+
+// Funcion de manejo del DOM
+function actualizarSaldo() {
+    document.getElementById("saldo").innerText = `Saldo Actual: $${saldo.toFixed(2)}`;
 }
 
-function agregarHistorial(tipo, monto){
+function mostrarFormulario(tipo){
+    document.getElementById("formulario").style.display = "block";
+    document.getElementById("formulario").dataset.tipo = tipo;
+}
+
+function ocultarFormulario() {
+    document.getElementById("formulario").style.display ="none";
+    document.getElementById("formulario").value = "";
+}
+
+// funcion mostrar mensaje
+function mostrarMensaje(mensaje){
+    document.getElementById("mensaje").innerText = mensaje;
+    setTimeout(() => {
+        document.getElementById("mensaje").innerText = "";
+    }, 3000);
+}
+
+// Funciones
+function consultarSaldo(){
+    mostrarMensaje(`Su saldo actual es: $${saldo.toFixed(2)}`);
+}
+
+function agregarAlHistoria(tipo, monto){
     const transaccion = {
         tipo: tipo,
         monto: monto,
+        fecha: new Date().toLocaleDateString()
     };
-    historialTrans.push(transaccion)
+    historialTransacciones.push(transaccion);
+    localStorage.setItem('historialTransacciones', JSON.stringify(historialTransacciones));
 }
-
-function mostrarHistorial(){
-    if(historialTrans === 0){
-        alert("No existen transacciones pervias")
-        console.log("No hay historial")
-    }else{
-        let mensajeHistoria = "Historial de transacciones: \n"
-        for(let i = 0 ; i <historialTrans.length; i++){
-            mensajeHistoria += i+1 + "- " + historialTrans[i].tipo + " de $" +  historialTrans[i].monto + "\n"
-        }
-        alert(mensajeHistoria)
+function mostrarHistorial() {
+    const historialDiv = document.getElementById("historial");
+    historialDiv.innerHTML = ''; 
+  
+    if (historialTransacciones.length === 0) {
+      historialDiv.innerHTML = "<p>No hay transacciones en el historial.</p>";
+    } else {
+      // Crear el HTML con clases para cada transacción
+      historialTransacciones.forEach(transaccion => {
+        const transaccionElement = document.createElement('p');
+        transaccionElement.className = transaccion.tipo.toLowerCase(); // Usar tipo en minúsculas como clase
+        transaccionElement.textContent = `${transaccion.tipo} de $${transaccion.monto} el ${transaccion.fecha}`;
+        historialDiv.appendChild(transaccionElement);
+      });
+  
+      // Mostrar el historial y luego ocultarlo después de 5 segundos
+      historialDiv.style.display = "block";
+      setTimeout(() => {
+        historialDiv.style.display = "none";
+      }, 10000); 
     }
-}
+  }
 
-function depositarDinero() {
-    let monto = parseFloat(prompt("Ingrese monto a depositar: "))
-    if( monto >  0){
-        let confirmar = confirm("¿Esta seguro que quiere depositar: $" + monto + " ?")
-        if(confirmar){
-            saldo = saldo + monto 
-            alert("Deposito exitoso, su saldo acutal es de : $ " + saldo)
-            console.log("Deposito de : $" + monto )
-            console.log("Saldo final : $" + saldo)  
-            agregarHistorial("Deposito", monto)  
-        }else{
-            alert("Deposito cancelador")
-            console.log("Se cancelo el deposito")
-        }
-    }else{
-        alert("Monto invalido, ingrese un valor correcto.")
-        console.log("Error monto incalido")
+function realizarTransaccion(){
+    const tipo = document.getElementById("formulario").dataset.tipo;
+    const monto = parseFloat(document.getElementById("monto").value);
+
+    if (tipo ==="depositar" && monto > 0){
+        saldo += monto;
+        mostrarMensaje(`Deposito exitoso. Su nuevo saldo es de: $${saldo.toFixed(2)}`);
+        agregarAlHistoria("Deposito ", monto);
+    }else if (tipo === "retirar" && monto <= saldo && monto > 0) {
+        saldo -= monto;
+        mostrarMensaje(`Retiro exitoso. Su nuevo saldo es de: $${saldo.toFixed(2)}`);
+        agregarAlHistoria("Retiro ", monto)
+    }else {
+        mostrarMensaje("Ocurrio un error, vuelva a intentarlo.")
     }
+    localStorage.setItem('saldo', saldo);
+    actualizarSaldo();
+    ocultarFormulario();
 }
 
-function retirarDinero(){
-    let retiro = parseFloat(prompt("Ingrese un monto de retiro: "))
-    if (retiro <= saldo){
-        let confirmar = confirm("¿Esta seguro que quiere retirar: $" + retiro + " ?")
-        if(confirmar){
-            saldo = saldo - retiro
-            alert("Se genero el retiro con exito")
-            alert("Su saldo disponible es de : $ " + saldo)
-            console.log("Retiro: $" + retiro + " Saldo actual : $" + saldo)
-            agregarHistorial("Retiro", saldo)
-        }else{
-            alert("Retiro cancelado")
-            console.log("Se cancelo el retiro")
-        }
-    }else{
-        alert("Dinero insuficiente. Coloque un monto correcto.")
-        alert("Dinero disponible: $" + saldo)
-        console.log("Monto no valido para retiro")
-    }   
-}
 
-function menuCajero(){
-    let opcion;
-    do {
-        opcion = prompt("Seleccione una opcion: \n1. Consultar saldo \n2. Depositar Dinero \n3. Retirar dinero \n4. Mostrar historial de transacciones. \n5. Salir")
-        switch (opcion) {
-            case "1" :
-                consultarSaldo();
-                break;
-            case "2" :
-                depositarDinero();
-                break;
-            case "3" :
-                retirarDinero();
-                break;
-            case "4" :
-                mostrarHistorial();
-                break;
-            case "5":
-                alert("Gracias por usar la app.");
-            default :
-            alert("Opcion invalida. Vuelva a intentarlo.");
-        }
-    } while (opcion !== "5")
-}
+// Asignar eventos a los botones
+document.getElementById("consultarSaldo").addEventListener("click", consultarSaldo);
+document.getElementById("depositar").addEventListener("click", () => mostrarFormulario("depositar"));
+document.getElementById("retirar").addEventListener("click", () => mostrarFormulario("retirar"));
+document.getElementById("verHistorial").addEventListener("click", mostrarHistorial);
+document.getElementById("confirmarTransaccion").addEventListener("click", realizarTransaccion);
+document.getElementById("cancelarTransaccion").addEventListener("click", ocultarFormulario);
 
-menuCajero()
 

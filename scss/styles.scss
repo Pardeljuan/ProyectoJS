@@ -1,0 +1,60 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    margin: 20px;
+
+
+h1 {
+    color: #333;
+  }
+  
+  #menu {
+    button{
+        margin: 5px;
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+  }
+  
+  #formulario {
+    margin-top: 20px;
+  }
+  
+  #historial {
+    margin-top: 20px;
+    align-content: center;
+    text-align: center;
+    .deposito {
+      color: green;
+    }
+    .retiro {
+      color: red;
+    }
+  }
+
+  #confirmarTransaccion {
+    background-color: rgb(29, 127, 29);
+    color: white;
+    cursor: pointer;
+    &:hover{
+        background-color: rgb(0, 77, 0);
+        color: rgb(109, 109, 109);
+    }
+  }
+  #cancelarTransaccion {
+    background-color: rgb(173, 9, 9);
+    color: white;
+    cursor: pointer;
+    &:hover{
+        background-color: #650000;
+        color: rgb(131, 131, 131);
+    }
+  }
+
+  #mensaje {
+    margin-top: 20px;
+    color: green;
+    font-weight: bold;
+  }
+}
