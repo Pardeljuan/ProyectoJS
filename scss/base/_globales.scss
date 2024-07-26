@@ -1,0 +1,127 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    margin: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: rgb(235, 168, 33);
+    border: 6px solid rgb(0, 0, 0) ;
+
+
+h1 {
+    color: rgb(12, 12, 12);
+    font-size: 50px;
+  }
+  
+  #menu {
+    button{
+        margin: 5px;
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    #depositar {
+      background-color: rgb(2, 203, 2);
+      &:hover{
+        background-color: rgb(1, 106, 1);
+      }
+    }
+    #retirar{
+      background-color: rgb(201, 0, 0);
+      &:hover{
+        background-color: rgb(117, 0, 0);
+      }
+    }
+  }
+  
+  #formulario {
+    margin-top: 20px;
+  }
+  
+  #historial {
+    margin-top: 20px;
+    align-content: center;
+    text-align: center;
+    .deposito {
+      color: green;
+    
+      }
+    }
+    .retiro {
+      color: red;
+    }
+  }
+
+  #confirmarTransaccion {
+    background-color: rgb(29, 127, 29);
+    color: white;
+    cursor: pointer;
+    &:hover{
+        background-color: rgb(0, 77, 0);
+        color: rgb(109, 109, 109);
+    }
+  }
+  #cancelarTransaccion {
+    background-color: rgb(173, 9, 9);
+    color: white;
+    cursor: pointer;
+    &:hover{
+        background-color: #650000;
+        color: rgb(131, 131, 131);
+    }
+  }
+
+  #mensaje {
+    font-size: 35px;
+    margin-top: 20px;
+    color: green;
+    font-weight: bold;
+  }
+
+#saldo {
+  color: #ffffff;
+  font-size: 30px;
+  padding: 2rem;
+  margin: 2rem;
+}
+
+#divisa {
+  background-color: white;
+  border: 1px solid white;
+  
+}
+#consultarSaldo {
+  &:hover{
+    background-color: rgb(149, 52, 14 );
+  }
+}
+#compraUsd{
+  &:hover{
+    background-color: rgb(149, 52, 14 );
+  }
+}
+#consultarUsd{
+  &:hover{
+    background-color: rgb(149, 52, 14 );
+  }
+}
+#depositar{
+  &:hover{
+    background-color: rgb(149, 52, 14 );
+  }
+}
+#retirar {
+  &:hover{
+    background-color: rgb(149, 52, 14 );
+  }
+}
+#verHistorial{
+  &:hover{
+    background-color: rgb(149, 52, 14 );
+  }
+}
+#borrarHistorial{
+  &:hover{
+    background-color: rgb(149, 52, 14 );
+  }
+}

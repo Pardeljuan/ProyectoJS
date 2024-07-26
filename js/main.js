@@ -1,7 +1,7 @@
 // Inicializar variables y cargar datos del localStorage
 let saldo = parseFloat(localStorage.getItem('saldo')) || 1000;
+let saldoUSD = parseFloat(localStorage.getItem('saldoUSD')) || 0;
 const historialTransacciones = JSON.parse(localStorage.getItem('historialTransacciones')) || [];
-
 
 // Actualizar el saldo en la interfaz
 document.getElementById("saldo").innerText = `Saldo actual: $${saldo.toFixed(2)}`;
@@ -13,6 +13,8 @@ const mapearTransacciones = () => historialTransacciones.map(transaccion => `${t
 // Funcion de manejo del DOM
 function actualizarSaldo() {
     document.getElementById("saldo").innerText = `Saldo Actual: $${saldo.toFixed(2)}`;
+    document.getElementById("saldoUSD").innerText = `Saldo Actual: $${saldoUSD.toFixed(2)}`;
+    document.getElementById("saldoEUR").innerText = `Saldo Actual: $${saldoEUR.toFixed(2)}`;
 }
 
 function mostrarFormulario(tipo){
@@ -25,18 +27,24 @@ function ocultarFormulario() {
     document.getElementById("formulario").value = "";
 }
 
-// funcion mostrar mensaje
-function mostrarMensaje(mensaje){
-    document.getElementById("mensaje").innerText = mensaje;
-    setTimeout(() => {
-        document.getElementById("mensaje").innerText = "";
-    }, 3000);
-}
+function mostrarMensaje(mensaje, tipo) {
+        Swal.fire({
+            text: mensaje,
+            icon: tipo,
+        })
+    }
 
 // Funciones
 function consultarSaldo(){
-    mostrarMensaje(`Su saldo actual es: $${saldo.toFixed(2)}`);
+    mostrarMensaje(`Su saldo actual es: $${saldo.toFixed(2)}`, 'info');
 }
+function consultarUsd(){
+    mostrarMensaje(`Su saldo en Dolares es: $ ${saldoUSD.toFixed(2)}`, 'info');
+}
+function consultarEur(){
+    mostrarMensaje(`Su saldo en Euros es: $${saldoEUR.toFixed(2)}`, 'info');
+}
+
 
 function agregarAlHistoria(tipo, monto){
     const transaccion = {
@@ -47,6 +55,7 @@ function agregarAlHistoria(tipo, monto){
     historialTransacciones.push(transaccion);
     localStorage.setItem('historialTransacciones', JSON.stringify(historialTransacciones));
 }
+
 function mostrarHistorial() {
     const historialDiv = document.getElementById("historial");
     historialDiv.innerHTML = ''; 
@@ -76,20 +85,37 @@ function realizarTransaccion(){
 
     if (tipo ==="depositar" && monto > 0){
         saldo += monto;
-        mostrarMensaje(`Deposito exitoso. Su nuevo saldo es de: $${saldo.toFixed(2)}`);
+        mostrarMensaje(`Deposito exitoso. Su nuevo saldo es de: $${saldo.toFixed(2)}`, 'success');
         agregarAlHistoria("Deposito ", monto);
     }else if (tipo === "retirar" && monto <= saldo && monto > 0) {
         saldo -= monto;
-        mostrarMensaje(`Retiro exitoso. Su nuevo saldo es de: $${saldo.toFixed(2)}`);
+        mostrarMensaje(`Retiro exitoso. Su nuevo saldo es de: $${saldo.toFixed(2)}`, 'success');
         agregarAlHistoria("Retiro ", monto)
     }else {
-        mostrarMensaje("Ocurrio un error, vuelva a intentarlo.")
+        mostrarMensaje("Ocurrio un error, vuelva a intentarlo.", 'error')
     }
     localStorage.setItem('saldo', saldo);
     actualizarSaldo();
     ocultarFormulario();
 }
-
+function borrarHistorial(){
+    Swal.fire({
+        title: '¿Estas seguro que desea borrar el historial ?',
+        text: 'Una vez borrado no se puede recuperar',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, Borrar todo"
+    }).then((result) => {
+        if(result.isConfirmed){
+            localStorage.removeItem('historialTransacciones');
+            historialTransacciones.length = 0;
+            mostrarMensaje('Historial Borrado', 'success')
+        }
+    })
+    
+}
 
 // Asignar eventos a los botones
 document.getElementById("consultarSaldo").addEventListener("click", consultarSaldo);
@@ -98,5 +124,7 @@ document.getElementById("retirar").addEventListener("click", () => mostrarFormul
 document.getElementById("verHistorial").addEventListener("click", mostrarHistorial);
 document.getElementById("confirmarTransaccion").addEventListener("click", realizarTransaccion);
 document.getElementById("cancelarTransaccion").addEventListener("click", ocultarFormulario);
+document.getElementById("borrarHistorial").addEventListener("click", borrarHistorial);
+
 
 

@@ -1,0 +1,28 @@
+.carrusel-container {
+    background-color: rgb(255, 71, 0 );
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%; /* Ajustar al ancho de la pantalla */
+    /* height: 50px; */ /* Ajustar según el contenido */
+}
+
+.carrusel {
+    animation: moveX;
+    padding: 5px;
+    animation-duration: 15s;
+    animation-delay: 0s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    display: flex;
+    flex-direction: row;
+    color: white;
+}
+
+@keyframes moveX {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
