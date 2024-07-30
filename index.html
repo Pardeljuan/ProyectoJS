@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Juan Pardel / Cajero automatico simulardor</title>
-    <script defer src="./js/main.js"></script>
-    <script defer src="./js/dolarAPI.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" defer src="./js/main.js"></script>
+    <script type="module" defer src="./js/dolarAPI.js"></script>
+
 </head>
 <body>
     <h1>Simulador de cajero</h1>
@@ -17,18 +17,22 @@
         <div id="valorDolar" class="carrusel">Cargando valor del dolar...</div>
     </div>
     <div id="saldo"></div> <!-- menu de opciones -->
+    <div id="saldoUSD"></div> <!-- menu de opciones -->
 
     
     <div id="menu">
         <button id="consultarSaldo">Consultar Saldo</button>
         <button id="depositar">Realizar un deposito</button>
         <button id="retirar">Realizar una extraccion</button>
+        <button id="comprarDolares">Comprar Dolares</button>
+        <button id="consultarUsd">Consultar Saldo en Dolares</button>
         <button id="verHistorial">Ver historial de transacciones</button>
         <button id="borrarHistorial">Borrar Historial</button>
     </div>
     <!-- formulario de acciones -->
     <div id="formulario" style="display: none;">$
-        <input type="number" id="monto" placeholder="Ingrese el monto" class="">
+        <input type="number" id="monto" placeholder="Ingrese el monto en pesos">
+        <div id="conversion"></div> <!-- Div para mostrar la conversión en tiempo real -->
         <button id="confirmarTransaccion" class="btn confirm">Confirmar</button>
         <button id="cancelarTransaccion" class="btn cancel">Cancelar</button>
     </div>

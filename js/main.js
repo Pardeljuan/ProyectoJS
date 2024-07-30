@@ -1,3 +1,5 @@
+import { dolarHoy } from  './dolarAPI.js';
+
 // Inicializar variables y cargar datos del localStorage
 let saldo = parseFloat(localStorage.getItem('saldo')) || 1000;
 let saldoUSD = parseFloat(localStorage.getItem('saldoUSD')) || 0;
@@ -5,6 +7,7 @@ const historialTransacciones = JSON.parse(localStorage.getItem('historialTransac
 
 // Actualizar el saldo en la interfaz
 document.getElementById("saldo").innerText = `Saldo actual: $${saldo.toFixed(2)}`;
+document.getElementById("saldoUSD").innerText = `Saldo actual: $${saldoUSD.toFixed(2)}`;
 
 // Funciones de orden superior
 const filtarTransacciones = (tipo) => historialTransacciones.filter(transaccion => transaccion.tipo === tipo);
@@ -14,7 +17,6 @@ const mapearTransacciones = () => historialTransacciones.map(transaccion => `${t
 function actualizarSaldo() {
     document.getElementById("saldo").innerText = `Saldo Actual: $${saldo.toFixed(2)}`;
     document.getElementById("saldoUSD").innerText = `Saldo Actual: $${saldoUSD.toFixed(2)}`;
-    document.getElementById("saldoEUR").innerText = `Saldo Actual: $${saldoEUR.toFixed(2)}`;
 }
 
 function mostrarFormulario(tipo){
@@ -25,6 +27,7 @@ function mostrarFormulario(tipo){
 function ocultarFormulario() {
     document.getElementById("formulario").style.display ="none";
     document.getElementById("formulario").value = "";
+    document.getElementById("conversion").innerText = ""; // Limpiar la conversión cuando se oculta el formulario
 }
 
 function mostrarMensaje(mensaje, tipo) {
@@ -40,9 +43,6 @@ function consultarSaldo(){
 }
 function consultarUsd(){
     mostrarMensaje(`Su saldo en Dolares es: $ ${saldoUSD.toFixed(2)}`, 'info');
-}
-function consultarEur(){
-    mostrarMensaje(`Su saldo en Euros es: $${saldoEUR.toFixed(2)}`, 'info');
 }
 
 
@@ -79,7 +79,7 @@ function mostrarHistorial() {
     }
   }
 
-function realizarTransaccion(){
+const realizarTransaccion = async () => {
     const tipo = document.getElementById("formulario").dataset.tipo;
     const monto = parseFloat(document.getElementById("monto").value);
 
@@ -87,17 +87,49 @@ function realizarTransaccion(){
         saldo += monto;
         mostrarMensaje(`Deposito exitoso. Su nuevo saldo es de: $${saldo.toFixed(2)}`, 'success');
         agregarAlHistoria("Deposito ", monto);
-    }else if (tipo === "retirar" && monto <= saldo && monto > 0) {
+    } else if (tipo === "retirar" && monto <= saldo && monto > 0) {
         saldo -= monto;
         mostrarMensaje(`Retiro exitoso. Su nuevo saldo es de: $${saldo.toFixed(2)}`, 'success');
         agregarAlHistoria("Retiro ", monto)
-    }else {
+    } else if (tipo === "comprarDolares" && monto <= saldo && monto > 0){
+        const tasaDolar = await dolarHoy();
+        if(tasaDolar){
+            const dolaresComprados = monto / tasaDolar;
+            saldo -= monto;
+            saldoUSD += dolaresComprados;
+            mostrarMensaje(`Compra exitosa. Usted ha comprado $${dolaresComprados.toFixed(2)} USD.`, 'success');
+            agregarAlHistoria("Compra de Dolares", monto);
+        } else {
         mostrarMensaje("Ocurrio un error, vuelva a intentarlo.", 'error')
+        } 
+    }else{
+        mostrarMensaje('Ocurrio un error, vuelva a intentarlo', 'error');
     }
     localStorage.setItem('saldo', saldo);
+    localStorage.setItem('saldoUSD', saldoUSD);
     actualizarSaldo();
     ocultarFormulario();
 }
+
+/* async function comprarDolares(){
+    const monto = parseFloat(document.getElementById("monto").value);
+    const tasaDolar = await dolarHoy();
+
+    if (tasaDolar && monto <= saldo && monto > 0){
+        const dolaresComprados = monto / tasaDolar;
+        saldo -= monto;
+        saldoUSD += dolaresComprados;
+        mostrarMensaje(`Compra exitosa. Usted ha comprado $${dolaresComprados.toFixed(2)} USD.`, 'success');
+        agregarAlHistoria("Compra de Dolares", monto);
+    }else {
+        mostrarMensaje("Ocurrio un error, vuelva a intentarlo.", 'error');
+    }
+    localStorage.setItem('saldo', saldo);
+    localStorage.setItem('saldoUSD', saldoUSD);
+    actualizarSaldo()
+    ocultarFormulario()
+}
+ */
 function borrarHistorial(){
     Swal.fire({
         title: '¿Estas seguro que desea borrar el historial ?',
@@ -116,6 +148,17 @@ function borrarHistorial(){
     })
     
 }
+// conversión en tiempo real
+document.getElementById("monto").addEventListener("input", async () => {
+    const monto = parseFloat(document.getElementById("monto").value);
+    const tasaDolar = await dolarHoy();
+    if (tasaDolar && monto > 0) {
+        const dolares = monto / tasaDolar;
+        document.getElementById("conversion").innerText = `Equivale a ${dolares.toFixed(2)} USD`;
+    } else {
+        document.getElementById("conversion").innerText = "";
+    }
+});
 
 // Asignar eventos a los botones
 document.getElementById("consultarSaldo").addEventListener("click", consultarSaldo);
@@ -125,6 +168,9 @@ document.getElementById("verHistorial").addEventListener("click", mostrarHistori
 document.getElementById("confirmarTransaccion").addEventListener("click", realizarTransaccion);
 document.getElementById("cancelarTransaccion").addEventListener("click", ocultarFormulario);
 document.getElementById("borrarHistorial").addEventListener("click", borrarHistorial);
+document.getElementById("comprarDolares").addEventListener("click", () => mostrarFormulario("comprarDolares"));
+document.getElementById("consultarUsd").addEventListener("click", consultarUsd);
+
 
 
 
